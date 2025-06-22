@@ -1,13 +1,18 @@
 ﻿using AngularAuthAPI.Models.Dto;
 using BOGOGMATCH_DOMAIN.MODELS.UserManagement;
 using BOGOMATCH_DOMAIN.INTERFACE;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
+
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
+
     private readonly IUserAuthService _authService;
 
     public UserController(IUserAuthService authService)
@@ -15,20 +20,23 @@ public class UserController : ControllerBase
         _authService = authService;
     }
 
-    [HttpPost("Authenticate")]
-    public async Task<IActionResult> Authenticate([FromBody] User userObj)
+    [HttpPost("Login")]
+    [AllowAnonymous]
+    public async Task<IActionResult> LoginAsync(string email, string password)
     {
-        var result = await _authService.AuthenticateAsync(userObj);
+        var result = await _authService.LoginAsync(email, password);
         return Ok(result);
     }
 
     [HttpPost("Register")]
+    [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] User userObj)
     {
         var result = await _authService.RegisterUserAsync(userObj);
         return Ok(new { Message = result });
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetAllUsers()
     {

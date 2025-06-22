@@ -28,15 +28,14 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
             _emailService = emailService;
         }
 
-        public async Task<TokenApiDTO> AuthenticateAsync(User userObj)
+        public async Task<TokenApiDTO> LoginAsync(string email, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == userObj.Username);
-            if (user == null || !PasswordHasher.VerifyPassword(userObj.Password, user.Password))
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            if (user == null || !PasswordHasher.VerifyPassword(password, user.Password))
                 throw new UnauthorizedAccessException("Invalid credentials.");
 
             var newAccessToken = CreateJwt(user);
             var newRefreshToken = CreateRefreshToken();
-            user.Token = newAccessToken;
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenxEpiryTime = DateTime.Now.AddDays(5);
 
@@ -50,15 +49,11 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
             if (await _context.Users.AnyAsync(x => x.Email == userObj.Email))
                 return "Email already exists";
 
-            if (await _context.Users.AnyAsync(x => x.Username == userObj.Username))
-                return "Username already exists";
-
             var passMessage = CheckPasswordStrength(userObj.Password);
             if (!string.IsNullOrEmpty(passMessage)) return passMessage;
 
             userObj.Password = PasswordHasher.HashPassword(userObj.Password);
             userObj.Role = "Admin";
-            userObj.Token = "";
             await _context.Users.AddAsync(userObj);
             await _context.SaveChangesAsync();
             return "User Added!";
@@ -76,7 +71,7 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
 
                 throw;
             }
-            
+
         }
 
         public async Task<TokenApiDTO> RefreshTokenAsync(TokenApiDTO TokenApiDTO)
@@ -84,7 +79,7 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
             var principal = GetPrincipalFromExpiredToken(TokenApiDTO.AccessToken);
             var username = principal?.Identity?.Name;
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == username);
             if (user == null || user.RefreshToken != TokenApiDTO.RefreshToken || user.RefreshTokenxEpiryTime <= DateTime.Now)
                 throw new SecurityTokenException("Invalid refresh token");
 
@@ -135,7 +130,7 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
             var key = Encoding.ASCII.GetBytes(_config["JWT:Secret"]);
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role)
             };
 

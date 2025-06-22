@@ -5,7 +5,7 @@ namespace BOGOMATCH_DOMAIN.INTERFACE
 {
     public interface IUserAuthService
     {
-        Task<TokenApiDTO> AuthenticateAsync(User userObj);
+        Task<TokenApiDTO> LoginAsync(string email, string password);
         Task<string> RegisterUserAsync(User userObj);
         Task<List<User>> GetAllUsersAsync();
         Task<TokenApiDTO> RefreshTokenAsync(TokenApiDTO TokenApiDTO);

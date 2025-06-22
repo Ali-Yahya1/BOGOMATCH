@@ -20,7 +20,6 @@ namespace BOGOMATCH_INFRASTRUCTURE.SERVICES
         {
             try
             {
-                //Testing the Email functionality
                 var apiKey = _configuration["SendGridSettings:ApiKey"];
                 var fromEmail = _configuration["SendGridSettings:FromEmail"];
                 var fromName = _configuration["SendGridSettings:FromName"];
@@ -47,10 +46,5 @@ namespace BOGOMATCH_INFRASTRUCTURE.SERVICES
                 return new EmailResult(false, $"Exception occurred while sending email: {ex.Message}");
             }
         }
-
-        
-
-
     }
-
 }
