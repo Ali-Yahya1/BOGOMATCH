@@ -15,15 +15,35 @@ namespace BOGOMATCH.Helper
         {
             try
             {
-                await _next(context);
+                await _next(context);  
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Error occurred while processing request {RequestPath}", context.Request.Path);
-
-                context.Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+                Log.Error("----------------");
                 context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync("{\"error\": \"An unexpected error occurred\"}");
+                switch (ex)
+                {
+                    case ArgumentException _:
+                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                        await context.Response.WriteAsync("{\"error\": \"Bad request, invalid argument\"}");
+                        break;
+
+                    case UnauthorizedAccessException _:
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        await context.Response.WriteAsync("{\"error\": \"Unauthorized access\"}");
+                        break;
+
+                    case InvalidOperationException _:
+                        context.Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+                        await context.Response.WriteAsync("{\"error\": \"Invalid operation\"}");
+                        break;
+
+                    case Exception _:
+                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                        await context.Response.WriteAsync("{\"error\": \"An unexpected error occurred\"}");
+                        break;
+                }
             }
         }
     }
