@@ -46,17 +46,28 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
 
         public async Task<string> RegisterUserAsync(User userObj)
         {
-            if (await _context.Users.AnyAsync(x => x.Email == userObj.Email))
-                return "Email already exists";
+            try
+            {
+                if (await _context.Users.AnyAsync(x => x.Email == userObj.Email))
+                    return "Email already exists";
 
-            var passMessage = CheckPasswordStrength(userObj.Password);
-            if (!string.IsNullOrEmpty(passMessage)) return passMessage;
+                var passMessage = CheckPasswordStrength(userObj.Password);
+                if (!string.IsNullOrEmpty(passMessage)) return passMessage;
 
-            userObj.Password = PasswordHasher.HashPassword(userObj.Password);
-            userObj.Role = "Admin";
-            await _context.Users.AddAsync(userObj);
-            await _context.SaveChangesAsync();
-            return "User Added!";
+                userObj.Password = PasswordHasher.HashPassword(userObj.Password);
+                userObj.Role = "Guest";
+                userObj.CreatedAt = DateTime.UtcNow;
+                userObj.UpdatedAt = DateTime.UtcNow;
+                await _context.Users.AddAsync(userObj);
+                await _context.SaveChangesAsync();
+                return "User Added!";
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
         }
 
         public async Task<List<User>> GetAllUsersAsync()

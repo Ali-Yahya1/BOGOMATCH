@@ -1,6 +1,7 @@
 ﻿using AngularAuthAPI.Models.Dto;
 using BOGOGMATCH_DOMAIN.MODELS.UserManagement;
 using BOGOMATCH_DOMAIN.INTERFACE;
+using BOGOMATCH_DOMAIN.MODELS.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,9 +23,9 @@ public class UserController : ControllerBase
 
     [HttpPost("Login")]
     [AllowAnonymous]
-    public async Task<IActionResult> LoginAsync(string email, string password)
+    public async Task<IActionResult> LoginAsync([FromBody] LoginRequestDto login)
     {
-        var result = await _authService.LoginAsync(email, password);
+        var result = await _authService.LoginAsync(login.Email, login.Password);
         return Ok(result);
     }
 

@@ -11,7 +11,7 @@ namespace BOGOGMATCH_DOMAIN.MODELS.UserManagement
         public string Name { get; set; }
         public string Email { get; set; }
         public string? Password { get; set; }
-        public string Role { get; set; }
+        public string? Role { get; set; }
         public bool IsGoogleAuthenticated { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public DateTime CreatedAt { get; set; }
