@@ -12,7 +12,7 @@
                         <div>
                             <h1>Reset your Password</h1>
                             <hr>
-                            <p>You're receiving this e-mail because you requested a password reset for your BOGO MATCH account.</p>
+                            <p>You're receiving this e-mail because you requested a password reset for your BOGOMATCH account.</p>
                             <p>Please tap the button below to choose a new password.</p>
                             <a href=""http://localhost:4200/reset?email={email}&code={emailToken}""
                                target=""_blank""
@@ -20,7 +20,7 @@
                                 Reset Password
                             </a>
                             <p>Kind Regards,<br><br>
-                            Ryan</p>
+                            BOGOMATCH TEAM</p>
                         </div>
                     </div>
                 </body>

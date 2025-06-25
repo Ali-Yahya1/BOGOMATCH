@@ -52,10 +52,10 @@ public class UserController : ControllerBase
     [HttpPost("Refresh")]
     public async Task<IActionResult> Refresh([FromBody] TokenApiDTO tokenDto)
     {
-        var result = await _authService.RefreshTokenAsync(tokenDto);
+        var result = await _authService.refreshTokenAsync(tokenDto);
         return Ok(result);
     }
-
+    [AllowAnonymous]
     [HttpPost("Send-Reset-Email/{email}")]
     public async Task<IActionResult> SendResetEmail(string email)
     {

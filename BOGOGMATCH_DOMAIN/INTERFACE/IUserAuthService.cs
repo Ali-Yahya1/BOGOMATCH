@@ -8,7 +8,7 @@ namespace BOGOMATCH_DOMAIN.INTERFACE
         Task<TokenApiDTO> LoginAsync(string email, string password);
         Task<string> RegisterUserAsync(User userObj);
         Task<List<User>> GetAllUsersAsync();
-        Task<TokenApiDTO> RefreshTokenAsync(TokenApiDTO TokenApiDTO);
+        Task<TokenApiDTO> refreshTokenAsync(TokenApiDTO TokenApiDTO);
         Task<string> SendResetEmailAsync(string email);
         Task<string> ResetPasswordAsync(ResetPasswordDTO resetPasswordDto);
     }

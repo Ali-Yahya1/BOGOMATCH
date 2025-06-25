@@ -34,14 +34,14 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
             if (user == null || !PasswordHasher.VerifyPassword(password, user.Password))
                 throw new UnauthorizedAccessException("Invalid credentials.");
 
-            var newAccessToken = CreateJwt(user);
-            var newRefreshToken = CreateRefreshToken();
-            user.RefreshToken = newRefreshToken;
-            user.RefreshTokenxEpiryTime = DateTime.Now.AddDays(5);
+            var newaccessToken = CreateJwt(user);
+            var newrefreshToken = CreaterefreshToken();
+            user.refreshToken = newrefreshToken;
+            user.refreshTokenxEpiryTime = DateTime.Now.AddDays(5);
 
             await _context.SaveChangesAsync();
 
-            return new TokenApiDTO { AccessToken = newAccessToken, RefreshToken = newRefreshToken };
+            return new TokenApiDTO { accessToken = newaccessToken, refreshToken = newrefreshToken };
         }
 
         public async Task<string> RegisterUserAsync(User userObj)
@@ -85,21 +85,21 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
 
         }
 
-        public async Task<TokenApiDTO> RefreshTokenAsync(TokenApiDTO TokenApiDTO)
+        public async Task<TokenApiDTO> refreshTokenAsync(TokenApiDTO TokenApiDTO)
         {
-            var principal = GetPrincipalFromExpiredToken(TokenApiDTO.AccessToken);
+            var principal = GetPrincipalFromExpiredToken(TokenApiDTO.accessToken);
             var username = principal?.Identity?.Name;
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == username);
-            if (user == null || user.RefreshToken != TokenApiDTO.RefreshToken || user.RefreshTokenxEpiryTime <= DateTime.Now)
+            if (user == null || user.refreshToken != TokenApiDTO.refreshToken || user.refreshTokenxEpiryTime <= DateTime.Now)
                 throw new SecurityTokenException("Invalid refresh token");
 
-            var newAccessToken = CreateJwt(user);
-            var newRefreshToken = CreateRefreshToken();
-            user.RefreshToken = newRefreshToken;
+            var newaccessToken = CreateJwt(user);
+            var newrefreshToken = CreaterefreshToken();
+            user.refreshToken = newrefreshToken;
             await _context.SaveChangesAsync();
 
-            return new TokenApiDTO { AccessToken = newAccessToken, RefreshToken = newRefreshToken };
+            return new TokenApiDTO { accessToken = newaccessToken, refreshToken = newrefreshToken };
         }
 
         public async Task<string> SendResetEmailAsync(string email)
@@ -141,7 +141,7 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
             var key = Encoding.ASCII.GetBytes(_config["JWT:Secret"]);
             var claims = new[]
             {
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Role, user.Role)
             };
 
@@ -150,12 +150,12 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private string CreateRefreshToken()
+        private string CreaterefreshToken()
         {
             var tokenBytes = RandomNumberGenerator.GetBytes(64);
             var refreshToken = Convert.ToBase64String(tokenBytes);
-            if (_context.Users.Any(a => a.RefreshToken == refreshToken))
-                return CreateRefreshToken();
+            if (_context.Users.Any(a => a.refreshToken == refreshToken))
+                return CreaterefreshToken();
             return refreshToken;
         }
 

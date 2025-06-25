@@ -16,8 +16,8 @@ namespace BOGOGMATCH_DOMAIN.MODELS.UserManagement
         public DateTime? DateOfBirth { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public string? RefreshToken { get; set; }
-        public DateTime? RefreshTokenxEpiryTime { get; set; }
+        public string? refreshToken { get; set; }
+        public DateTime? refreshTokenxEpiryTime { get; set; }
         public string? ResetPasswordToken { get; set; }
         public DateTime? ResetPasswordExpiry { get; set; }
     }
