@@ -141,7 +141,7 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
             var key = Encoding.ASCII.GetBytes(_config["JWT:Secret"]);
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role)
             };
 

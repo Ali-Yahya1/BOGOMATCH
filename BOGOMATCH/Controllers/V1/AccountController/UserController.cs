@@ -62,7 +62,7 @@ public class UserController : ControllerBase
         var result = await _authService.SendResetEmailAsync(email);
         return Ok(new { Message = result });
     }
-
+    [AllowAnonymous]
     [HttpPost("Reset-Password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
     {

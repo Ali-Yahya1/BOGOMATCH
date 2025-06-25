@@ -14,7 +14,7 @@
                             <hr>
                             <p>You're receiving this e-mail because you requested a password reset for your BOGOMATCH account.</p>
                             <p>Please tap the button below to choose a new password.</p>
-                            <a href=""http://localhost:4200/reset?email={email}&code={emailToken}""
+                            <a href=""http://localhost:4200/reset-password?email={email}&code={emailToken}""
                                target=""_blank""
                                style=""background: #0d6efd; color: white; border-radius: 4px; display:block; margin: 0 auto; width: 50%; text-align: center; padding: 10px 0; text-decoration: none;"">
                                 Reset Password
