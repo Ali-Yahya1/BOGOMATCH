@@ -67,7 +67,7 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
 
                 throw;
             }
-           
+
         }
 
         public async Task<List<User>> GetAllUsersAsync()
@@ -134,6 +134,27 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
 
             return "Password Reset Successfully";
         }
+        public async Task<TokenApiDTO> AthenticateViaGoogle(User user)
+        {
+            var res = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == user.Email);
+            if (res == null)
+            {
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
+            }
+            var accessToken = CreateJwt(user);
+            var refreshToken = CreaterefreshToken();
+
+            user.refreshToken = refreshToken;
+            user.refreshTokenxEpiryTime = DateTime.UtcNow.AddDays(5);
+            await _context.SaveChangesAsync();
+
+            return new TokenApiDTO
+            {
+                accessToken = accessToken,
+                refreshToken = refreshToken
+            };
+        }
 
         // Helper methods
         private string CreateJwt(User user)
@@ -185,5 +206,6 @@ namespace BOGOMATCH_INFRASTRUCTURE.Services
                 sb.AppendLine("Password should contain at least one special character.");
             return sb.ToString();
         }
+
     }
 }

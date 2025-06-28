@@ -11,5 +11,6 @@ namespace BOGOMATCH_DOMAIN.INTERFACE
         Task<TokenApiDTO> refreshTokenAsync(TokenApiDTO TokenApiDTO);
         Task<string> SendResetEmailAsync(string email);
         Task<string> ResetPasswordAsync(ResetPasswordDTO resetPasswordDto);
+        Task<TokenApiDTO> AthenticateViaGoogle(User user);
     }
 }

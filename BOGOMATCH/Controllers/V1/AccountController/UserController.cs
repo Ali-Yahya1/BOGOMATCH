@@ -2,6 +2,7 @@
 using BOGOGMATCH_DOMAIN.MODELS.UserManagement;
 using BOGOMATCH_DOMAIN.INTERFACE;
 using BOGOMATCH_DOMAIN.MODELS.DTO;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -69,4 +70,33 @@ public class UserController : ControllerBase
         var result = await _authService.ResetPasswordAsync(dto);
         return Ok(new { Message = result });
     }
+
+    [HttpPost("signup-with-google")]
+    [AllowAnonymous]
+    public async Task<IActionResult> SignUpWithGoogle(string googleTokenRequest)
+    {
+        try
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(googleTokenRequest);
+            string email = payload.Email;
+            var user = new User
+            {
+                Email = email,
+                FirstName = payload.Name,
+                LastName = payload.Name,
+                Password = null,
+                IsGoogleAuthenticated = true,
+                CreatedAt = DateTime.Now,
+                Role = "Guest"
+            };
+
+            var tokenDto = await _authService.AthenticateViaGoogle(user);
+            return Ok(tokenDto);
+        }
+        catch (InvalidJwtException)
+        {
+            return Unauthorized("Invalid Google token");
+        }
+    }
+
 }

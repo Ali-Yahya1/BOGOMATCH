@@ -94,13 +94,14 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 //builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 builder.Services.AddSingleton(x =>
 {
     var secretKey = builder.Configuration.GetValue<string>("Stripe:SecretKey");
-    return new StripeClient(secretKey);
+    return new StripeClient(secretKey); // Correctly injected client
 });
 builder.Services.AddSingleton<PaymentIntentService>();
+
 builder.Services.AddScoped<IUserAuthService, UserAuthService>();
 
 var app = builder.Build();
